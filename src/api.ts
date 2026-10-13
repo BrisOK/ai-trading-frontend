@@ -2,6 +2,8 @@ import axios from "axios";
 
 const API_BASE = "http://127.0.0.1:8000";
 
+export type Market = "stock" | "crypto";
+
 export interface Trade {
     id: number;
     symbol: string;
@@ -36,9 +38,20 @@ export async function getSignals(symbol?: string): Promise<Signal[]> {
     return res.data;
 }
 
-export async function generateSignal(symbol: string): Promise<Signal> {
-    const res = await axios.post(`${API_BASE}/signals`, null, {
-        params: { symbol },
+export async function generateSignal(
+    symbol: string,
+    market: Market
+): Promise<Signal> {
+    const res = await axios.post(`${API_BASE}/signals`, {
+        symbol,
+        market,
     });
     return res.data;
+}
+
+export async function getLatestPrice(symbol: string, market: Market) {
+    const res = await axios.get(`${API_BASE}/price`, {
+        params: { symbol, market },
+    });
+    return res.data as { symbol: string; market: Market; price: number };
 }
