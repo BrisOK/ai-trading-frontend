@@ -5,14 +5,17 @@ import {
     createTrade,
     getSignals,
     generateSignal,
+    getLatestPrice,
     Trade,
     Signal,
+    Market,
 } from "./api";
 
 function App() {
     const [trades, setTrades] = useState<Trade[]>([]);
     const [signals, setSignals] = useState<Signal[]>([]);
     const [symbol, setSymbol] = useState("AAPL");
+    const [market, setMarket] = useState<Market>("stock");
     const [side, setSide] = useState<"buy" | "sell">("buy");
     const [quantity, setQuantity] = useState(1);
     const [price, setPrice] = useState(100);
@@ -39,8 +42,13 @@ function App() {
     };
 
     const handleGenerateSignal = async () => {
-        const signal = await generateSignal(symbol);
+        const signal = await generateSignal(symbol, market);
         setSignals((prev) => [signal, ...prev]);
+    };
+
+    const handleFetchPrice = async () => {
+        const result = await getLatestPrice(symbol, market);
+        setPrice(result.price);
     };
 
     return (
@@ -49,17 +57,35 @@ function App() {
 
            <section style={{ marginBottom: "2rem" }}>
                <h2>Generate AI Signal</h2>
-               <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+               <div
+                    style={{
+                        display: "flex",
+                        gap: "0.5rem",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                    }}
+                >
                    <input
                         value={symbol}
                         onChange={(e) => setSymbol(e.target.value.toUpperCase())}
-                        placeholder="Symbol (e.g., AAPL)"
+                        placeholder="Symbol (AAPL, BTCUSDT, etc.)"
                     />
+                   <select
+                        value={market}
+                        onChange={(e) => setMarket(e.target.value as Market)}
+                    >
+                       <option value="stock">Stock</option>
+                       <option value="crypto">Crypto</option>
+                   </select>
                    <button onClick={handleGenerateSignal}>Generate Signal</button>
+                   <button type="button" onClick={handleFetchPrice}>
+                        Get Latest Price
+                   </button>
                </div>
                <p style={{ fontSize: "0.9rem", marginTop: "0.5rem" }}>
-                    This is a simple demo strategy using a moving average. It is NOT
-                    financial advice and not suitable for real-money trading.
+                    For stocks, use tickers like  <b>AAPL</b>,  <b>TSLA</b>. For crypto,
+                    use Binance symbols like  <b>BTCUSDT</b>,  <b>ETHUSDT</b>. This is a
+                    simple moving-average strategy for demo only (NOT financial advice).
                </p>
            </section>
 
