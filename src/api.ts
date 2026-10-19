@@ -3,7 +3,6 @@ import axios from "axios";
 const API_BASE = "http://127.0.0.1:8000";
 
 export type Market = "stock" | "crypto";
-
 export interface Trade {
     id: number;
     symbol: string;
