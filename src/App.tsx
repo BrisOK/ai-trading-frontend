@@ -149,6 +149,7 @@ function App() {
                    </tbody>
                </table>
            </section>
+
            <section>
                <h2>Trade History</h2>
                <table border={1} cellPadding={6}>
